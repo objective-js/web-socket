@@ -33,7 +33,6 @@ var Socket = function () {
                 event: event,
                 params: params
             }));
-            console.log('emit ' + event);
         }
     }, {
         key: 'on',
@@ -67,12 +66,16 @@ var Socket = function () {
     }, {
         key: 'onMessage',
         value: function onMessage(message) {
-            var data = JSON.parse(message.data);
+            try {
+                var data = JSON.parse(message.data);
+            } catch (e) {
+                throw new Error('Unknown message format');
+            }
 
             if ('undefined' !== typeof data.event && 'undefined' !== typeof this.ids[data.event]) {
-                for (var k in this.ids[data.event]) {
-                    if (this.ids[data.event].hasOwnProperty(k)) {
-                        this.ids[data.event][k](data.message);
+                for (var key in this.ids[data.event]) {
+                    if (this.ids[data.event].hasOwnProperty(key)) {
+                        this.ids[data.event][key](data.message);
                     }
                 }
             }
