@@ -4,7 +4,7 @@ class Socket
     {
         this.ids = {};
         this.eventToMethods = {
-            'open' : 'onopen',
+            'open'  : 'onopen',
             'close' : 'onclose',
             'error' : 'onerror'
         };
@@ -22,9 +22,7 @@ class Socket
             event,
             params
         }));
-        console.log(`emit ${event}`);
     }
-
 
     on(event, listener)
     {
@@ -57,12 +55,16 @@ class Socket
 
     onMessage(message)
     {
-        let data = JSON.parse(message.data);
+        try {
+            var data = JSON.parse(message.data);
+        } catch(e) {
+            throw new Error(`Unknown message format`);
+        }
 
         if ('undefined' !== typeof data.event && 'undefined' !== typeof this.ids[data.event]) {
-            for (let k in this.ids[data.event]) {
-                if (this.ids[data.event].hasOwnProperty(k)) {
-                    this.ids[data.event][k](data.message);
+            for (let key in this.ids[data.event]) {
+                if (this.ids[data.event].hasOwnProperty(key)) {
+                    this.ids[data.event][key](data.message);
                 }
             }
         }
