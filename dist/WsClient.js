@@ -6,12 +6,16 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Socket = function () {
-    function Socket(host) {
+var WsClient = function () {
+    function WsClient(host) {
         var _this = this;
 
-        _classCallCheck(this, Socket);
+        var protocol = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ws';
+        var setActive = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
+        _classCallCheck(this, WsClient);
+
+        var self = this;
         this.ids = {};
         this.eventToMethods = {
             'open': 'onopen',
@@ -19,19 +23,28 @@ var Socket = function () {
             'error': 'onerror'
         };
         this.host = host;
-        this.socket = new WebSocket('ws://' + this.host);
+        this.protocol = protocol;
+        this.socket = new WebSocket(this.protocol + '://' + this.host);
 
         this.socket.onmessage = function (msg) {
             _this.onMessage(msg);
         };
+
+        if (setActive) {
+            window.addEventListener('focus', function () {
+                console.log('FOCUS LULS');
+                self.current();
+            });
+        }
     }
 
-    _createClass(Socket, [{
+    _createClass(WsClient, [{
         key: 'emit',
-        value: function emit(event, params) {
+        value: function emit(event, data) {
+            console.log('==> Emit : ', event, data);
             this.socket.send(JSON.stringify({
                 event: event,
-                params: params
+                data: data
             }));
         }
     }, {
@@ -47,6 +60,16 @@ var Socket = function () {
             } else {
                 throw new Error('The listener you want to register has to be a valid JavaScript function. ' + (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) + ' given');
             }
+        }
+    }, {
+        key: 'current',
+        value: function current() {
+            this.emit('current', "");
+        }
+    }, {
+        key: 'identify',
+        value: function identify(data) {
+            this.emit('identify', data);
         }
     }, {
         key: 'onopen',
@@ -66,6 +89,7 @@ var Socket = function () {
     }, {
         key: 'onMessage',
         value: function onMessage(message) {
+            console.log('==> On Message : ', message);
             try {
                 var data = JSON.parse(message.data);
             } catch (e) {
@@ -75,12 +99,12 @@ var Socket = function () {
             if ('undefined' !== typeof data.event && 'undefined' !== typeof this.ids[data.event]) {
                 for (var key in this.ids[data.event]) {
                     if (this.ids[data.event].hasOwnProperty(key)) {
-                        this.ids[data.event][key](data.message);
+                        this.ids[data.event][key](data.data);
                     }
                 }
             }
         }
     }]);
 
-    return Socket;
+    return WsClient;
 }();
