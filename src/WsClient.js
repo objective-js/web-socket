@@ -9,6 +9,9 @@ class WsClient
             'close' : 'onclose',
             'error' : 'onerror'
         };
+        this.protected = [
+            'current', 'identify'
+        ];
         this.host = host;
         this.protocol = protocol;
         this.socket = new WebSocket(`${this.protocol}://${this.host}`);
@@ -19,13 +22,16 @@ class WsClient
 
         if (setActive) {
             window.addEventListener('focus', function() {
-               self.current();
+                self.current();
             });
         }
     }
 
     emit(event, data)
     {
+        if (this.protected.indexOf(event) !== -1) {
+            return false;
+        }
         this.socket.send(JSON.stringify({
             event,
             data,
@@ -48,12 +54,15 @@ class WsClient
 
     current()
     {
-        this.emit('current', "");
+        let event = 'current';
+        let none = '';
+        this.socket.send(JSON.stringify({event, none}));
     }
 
     identify(data)
     {
-        this.emit('identify', data);
+        let event = 'identify';
+        this.socket.send(JSON.stringify({event, data}));
     }
 
     onopen(callback)
@@ -88,3 +97,5 @@ class WsClient
         }
     }
 }
+
+export default WsClient;
