@@ -4,7 +4,7 @@
 
 This repository contains a JavaScript class in `src/WsClient.js`. This class is an ES6 class.
 
-In order to use it in systems that does not yet understand ES6 features, a build is present in `dist/Socket.js`.
+In order to use it in systems that does not yet understand ES6 features, a build is present in `dist/WsClient.js`.
 
 If you modify the class, don't forget to build it in ES5 with this king of command:
 
