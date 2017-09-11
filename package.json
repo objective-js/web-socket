@@ -1,7 +1,7 @@
 {
-  "name": "objective-wsclient",
+  "name": "objective-ws-client",
   "version": "1.0.2",
-  "description": "Objective-JS Websocket Client",
+  "description": "ObjectiveJS Websocket Client",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
