@@ -1,5 +1,5 @@
 {
-  "name": "objective.io",
+  "name": "WsClient",
   "version": "1.0.1",
   "description": "Objective-JS Websocket Client",
   "main": "index.js",
