@@ -26,6 +26,7 @@ var WsClient = function () {
             'close': 'onclose',
             'error': 'onerror'
         };
+        this.protected = ['current', 'identify'];
         this.host = host;
         this.protocol = protocol;
         this.socket = new WebSocket(this.protocol + '://' + this.host);
@@ -44,6 +45,9 @@ var WsClient = function () {
     _createClass(WsClient, [{
         key: 'emit',
         value: function emit(event, data) {
+            if (this.protected.indexOf(event) !== -1) {
+                return false;
+            }
             this.socket.send(JSON.stringify({
                 event: event,
                 data: data
@@ -65,13 +69,15 @@ var WsClient = function () {
         }
     }, {
         key: 'current',
-        value: function current() {
-            this.emit('current', "");
+        value: function current(data) {
+            var event = 'current';
+            this.socket.send(JSON.stringify({ event: event, data: data }));
         }
     }, {
         key: 'identify',
         value: function identify(data) {
-            this.emit('identify', data);
+            var event = 'identify';
+            this.socket.send(JSON.stringify({ event: event, data: data }));
         }
     }, {
         key: 'onopen',

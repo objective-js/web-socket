@@ -51,10 +51,10 @@ class WsClient
             throw new Error(`The listener you want to register has to be a valid JavaScript function. ${typeof listener} given`);
         }
     }
-    current()
+    current(data)
     {
         let event = 'current';
-        this.socket.send(JSON.stringify({event}));
+        this.socket.send(JSON.stringify({event, data}));
     }
 
     identify(data)
